@@ -2,12 +2,14 @@ package com.badlogic.drop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Drop extends ApplicationAdapter {
@@ -84,5 +86,43 @@ public class Drop extends ApplicationAdapter {
 		//calling .end() submits all draw() calls at once
 		batch.end();
 		//rendering this way makes it much faster
+
+		//MOVEMENT LOGIC
+
+		//center the button horizontally around the clicked position
+		//check is screen is pressed / mouse is pressed
+		if (Gdx.input.isTouched()) {
+			//VERY BAD!! TO INSTANTIATE A V3 IN RENDER()
+			//THIS IS LEAKING MEMORY - INSTANTIATE AS A CLASS VARIABLE THEN REUSE / REASSIGN IN RENDER()
+			Vector3 touchPos = new Vector3();
+			//get x,y position of click
+			//store as V3 to make it easy to map back into 2D using a camera un-projection
+			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+			//map back to our camera's coordinate system
+			//the camera is actually rendering in 3D, just ignoring Z-coordinates (think Unity)
+			camera.unproject(touchPos);
+			bucket.x = touchPos.x - (64/2);
+		}
+
+		//keyboard movement
+		//we are going to do this smoothly, without acceleration => we need the time since the last frame
+
+		//left
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			//here, 200 is our 'speed' variable
+			//multiplying by getDeltaTime() smooths the movement so it's apparent speed is independent of framerate
+			//so any drops in framerate don't cause juttery movement
+			bucket.x -= 200f * Gdx.graphics.getDeltaTime();
+		}
+		//right
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			bucket.x += 200f * Gdx.graphics.getDeltaTime();
+		}
+
+		//COLLISION LOGIC
+
+		//make sure the bucket does not go off the sides of the screen
+		if (bucket.x < 0) bucket.x = 0;
+		if (bucket.x > (800 - 64)) bucket.x = 800 - 64;
 	}
 }

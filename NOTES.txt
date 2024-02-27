@@ -4,3 +4,5 @@ Set desktop config options here (window size, framerate, title, vsync)
 html/src/com.badlogic.drop/client/HtmlLauncher.java has a similar function for the HTML build of the game
 
 core/src/com/badlogic.drop/Drop.java is the main file that stores our game code
+
+pause and resume: ApplicationAdapter.pause() and ApplicationAdapter.resume() methods.

@@ -202,4 +202,14 @@ public class Drop extends ApplicationAdapter {
 		if (bucket.x < 0) bucket.x = 0;
 		if (bucket.x > (800 - 64)) bucket.x = 800 - 64;
 	}
+
+	//dispose() is called when the game is closed
+	@Override
+	public void dispose() {
+		dropImage.dispose();
+		bucketImage.dispose();
+		dropSound.dispose();
+		rainMusic.dispose();
+		batch.dispose();
+	}
 }
